@@ -100,21 +100,6 @@ struct node* searchChild(struct node* parent, char* name, int flag){
         }
         printf("%s --> ", temp->name );
     }
-    if(flag == 3){
-        struct node* temp = (struct node *)malloc(sizeof(struct node));
-        strcpy(temp->name,name);
-        temp->type = 'F';
-        temp->childPtr = NULL;
-        temp->siblingPtr = NULL;
-        temp->parentPtr = parent;
-        if(!parent->childPtr){ //if parent has no children, assign it a child
-            parent->childPtr = temp;
-        }
-        else{  //if parent has children then put at end of children list
-            previousNode->siblingPtr = temp;
-        }
-        printf("%s --> ", temp->name );
-    }
 
     printf("\n");
     return 0;
@@ -143,7 +128,10 @@ struct node* findDirectory(char *pathname, int flag)
                    // cwd = p;
                 }
                 else if(flag == 4){
-                    prev = p;
+                    if(strcmp(p->name,bname[0]) == 0){
+                        prev = p;
+                        exists = 1;
+                    }
                 }
             }
             else{

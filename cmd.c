@@ -5,11 +5,19 @@
 int cd(char *pathname){
     struct node *ptrDir;
     exists = 0;
+    n = 0;
     if(strlen(pathname) == 0){
         cwd = root;
     }
-    else if(strcmp(pathname, "..") == 0){
-        cwd = cwd->parentPtr;
+    else if(pathname[0] == '.'){
+        if(tokenize(pathname)){
+            for(int i = 0; i < n; i++)
+            {
+                if(strcmp(dname[0],"..") == 0){
+                    cwd = cwd->parentPtr;
+                }
+            }
+        }
     }
 
     else{
@@ -45,15 +53,17 @@ int mkdir(char *pathname){
 int rmdir(char *pathname){
     struct node *ptrDir;
 
-    ptrDir = findDirectory(pathname,2);
+    ptrDir = findDirectory(pathname,4);
 
-    if(ptrDir==0){
+    if(exists!=1){
         //no directory by that name
         printf("_err: not a directory");
     }
     else{
         //is a directory name
-        printf("\ncwd: %s type = %c\n", cwd->name, cwd->type);
+        ptrDir = prev;
+        prev->parentPtr->childPtr = NULL;
+        free(ptrDir);
     }
 }
 
