@@ -24,14 +24,15 @@ int checkABS(){
         _ABS = false;
     }
 }
-bool tokenize(char *pathname){
+bool tokenize(char *path){
     clearName();
     int end = strlen(pathname) - 1;    //set last index
     int index = 0;
     //printf("In tokenize(%s) | size: %d\n", pathname,end+1);
+    char *s;
+    checkABS();
     
-    
-    char *s = strtok(pathname,"/");
+    s = strtok(path,"/");
     while(s){
         //printf("s: %s\n", s);
         dname[index] = s;
@@ -45,7 +46,7 @@ bool tokenize(char *pathname){
     printf("dname: %s\n", (dname[0])); 
     printf("dname: %s\n", (dname[1])); */
 
-    checkABS();
+   
     if(strlen(dname[0]) > 0 || strlen(bname[0]) > 0){
         return true;
     } 
@@ -59,12 +60,11 @@ struct node* searchChild(struct node* parent, char* name, int flag){
     struct node *previousNode = parent->childPtr;  //child pointer
 
         while(cp){
-            printf("%s --> ", cp->name );
              if(name){
                 if(strcmp(cp->name,name) == 0 || strcmp(cp->name,bname[0]) == 0)  //compare param. name and childptr name
                 { 
                     if(flag == 2){
-                        if(strcmp(cp->name, bname[0]) == 0){
+                        if((strcmp(cp->name, bname[0]) == 0) && cp->type =='D'){
                             exists = 1;
                             cwd = cp;
                         }
@@ -87,7 +87,6 @@ struct node* searchChild(struct node* parent, char* name, int flag){
     if(flag == 1){
         struct node* temp = (struct node *)malloc(sizeof(struct node));
         strcpy(temp->name,bname[0]);
-        strcat(temp->name,"*");
         temp->type = 'D';
         temp->childPtr = NULL;
         temp->siblingPtr = NULL;
@@ -98,19 +97,31 @@ struct node* searchChild(struct node* parent, char* name, int flag){
         else{  //if parent has children then put at end of children list
             previousNode->siblingPtr = temp;
         }
-        printf("%s --> ", temp->name );
+    }
+    if(flag == 3){
+        struct node* temp = (struct node *)malloc(sizeof(struct node));
+        strcpy(temp->name,bname[0]);
+        temp->type = 'F';
+        temp->childPtr = NULL;
+        temp->siblingPtr = NULL;
+        temp->parentPtr = parent;
+        if(!parent->childPtr){ //if parent has no children, assign it a child
+            parent->childPtr = temp;
+        }
+        else{  //if parent has children then put at end of children list
+            previousNode->siblingPtr = temp;
+        }
     }
 
-    printf("\n");
     return 0;
 }
 
-struct node* findDirectory(char *pathname, int flag)
+struct node* findDirectory(char *path, int flag)
 {
     struct node *p = cwd;     //set ptr to cwd
     struct node *parPtr;      //declare parentPtr
 
-    if(!(tokenize(pathname))){ 
+    if(!(tokenize(path))){ 
         return p;
     }
     if (_ABS){      //if pathname is absolute/relative
@@ -122,22 +133,22 @@ struct node* findDirectory(char *pathname, int flag)
        if(p == 0){
            return 0;
        }
-       else{
-            if(p->type == 'D'){
-                if(flag == 2){
-                   // cwd = p;
-                }
-                else if(flag == 4){
-                    if(strcmp(p->name,bname[0]) == 0){
-                        prev = p;
-                        exists = 1;
-                    }
+       else if(p->type =='D'){
+            if(flag == 4){
+                if(strcmp(p->name,bname[0]) == 0){
+                    prev = p;
+                    exists = 1;
                 }
             }
-            else{
-                printf("_err: cd to type F (file)");
+        }
+        else{
+            if(flag == 4){
+                if(strcmp(p->name,bname[0]) == 0){
+                    prev = p;
+                    exists = 1;
+                }
             }
-       }
+        }
     }
     return p;
 }

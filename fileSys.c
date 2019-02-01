@@ -40,9 +40,7 @@ void RunCommand(int cmd, char pathname[64]){
 
 int main(int argc, char* argv, char* env){
     Initialize(); //init. root directory
-    int cmd = 0; //stores cur. user command
-         printf("root: %s\n", root->name);
-         printf("cwd: %s\n", cwd->name);                  // pass cmd and pathname to be ran
+    int cmd = 0; //stores cur. user command          
     do{
         pwd("none");
         fgets(line, LIMIT, stdin);                 // read line
@@ -51,8 +49,7 @@ int main(int argc, char* argv, char* env){
         cmd = FindCommand(command);                // find index loc. of command
         RunCommand(cmd,pathname);
         memset(&pathname,'\0',sizeof(pathname));
-        memset(&command,'\0',sizeof(cmd)); 
-        printf("\n");
-       
+        putchar('\n');
     }while(cmd != 10);
+    save("myfiles");
 }

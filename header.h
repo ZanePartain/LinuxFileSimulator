@@ -23,3 +23,4 @@ char *cmdlib[] = {"mkdir","rmdir","ls","cd","pwd","creat","rm",
                   "reload", "save", "menu","quit", NULL };
 bool _ABS = false; //1 == absolute, 0 == relative (pathname)
 int exists = 0;
+char parentPath[200];
